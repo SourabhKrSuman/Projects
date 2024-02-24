@@ -11,7 +11,7 @@ num1=$1
 num2=$2
 
 # Perform the addition
-sum=$((num1 + num2))
+sum=$((num1+ num2))
 
 # Print the result
 echo "Sum of $num1 and $num2 is: $sum"
