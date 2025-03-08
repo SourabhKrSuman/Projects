@@ -4,7 +4,10 @@ import os
 # from file_fetch import fetch_data
 from file_stg import process_and_store_data
 from datetime import datetime
+import time
 
+
+start_time = time.time()
 # Fetch the updated data from fetch.py
 df, source_file = process_and_store_data()
 current_date = datetime.now().strftime('%m%d%y')
@@ -88,4 +91,9 @@ try:
         print("Source file not found")
 except Exception as e:
     print(f"Error deleting source file: {e}")
+
+
+end_time = time.time()
+execution_time = end_time - start_time
+print (f"process completed in {execution_time//60} minutes")
 # sys.exit()
