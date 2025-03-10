@@ -16,10 +16,44 @@ current_date = datetime.now().strftime('%m%d%y')
 # df = df.sort_values(
 # by=['rank', 'Youtuber', 'started'],  # columns to sort by
 # ascending=[False, True, True])       # sort order for each column
-lastname = df['LastName'].iloc[0]
-firstname = df['FirstName'].iloc[0]
 
-df = df.sort_values(by='Data', ascending=False)
+# lastname = df['LastName'].iloc[0]
+# firstname = df['FirstName'].iloc[0]
+
+# # df = df.sort_values(by='Data', ascending=False)
+# # Create temporary columns for sorting
+# df['temp_youtuber'] = pd.to_datetime(df['Youtuber'], errors='coerce')
+# df['temp_started'] = pd.to_datetime(df['started'], errors='coerce')
+
+# Sort using temporary columns
+# df = df.sort_values(
+#     by=['rank', 'temp_youtuber', 'temp_started'],
+#     ascending=[False, True, True]
+# )
+
+# Remove temporary columns
+# df = df.drop(['temp_youtuber', 'temp_started'], axis=1)
+
+
+# Convert date columns to datetime and sort
+df['temp_Sdate'] = pd.to_datetime(df['Sdate'], errors='coerce')
+df['temp_Endate'] = pd.to_datetime(df['Endate'], errors='coerce')
+
+# Sort by Sdate and Endate, pushing empty values to the end
+df = df.sort_values(
+    by=['temp_Sdate', 'temp_Endate'],
+    ascending=[True, True],
+    na_position='last'
+)
+
+# Remove temporary columns
+df = df.drop(['temp_Sdate', 'temp_Endate'], axis=1)
+
+# Reorder columns (your existing code)
+columns_to_front = ["Ownership", "Data", "FirstName"]
+new_order = columns_to_front + [col for col in df.columns if col not in columns_to_front]
+df = df[new_order]
+
 columns_to_front = ["Ownership", "Data", "FirstName"]
 
 # Reorder columns
@@ -27,7 +61,7 @@ new_order = columns_to_front + [col for col in df.columns if col not in columns_
 df = df[new_order]
 
 # Create Excel writer object with xlsxwriter engine
-output_path = r"/Users/sbksu_lap/Downloads/{},{}_{}.xlsx".format(lastname,firstname, current_date)
+output_path = r"/Users/sbksu_lap/Downloads/{},{}_{}.xlsx".format(lastname, firstname, current_date)
 # output_path = r"/Users/sbksu_lap/Downloads/Test_{}.xlsx".format(current_date)
 writer = pd.ExcelWriter(output_path, engine='xlsxwriter')
 
@@ -58,23 +92,62 @@ data_format = workbook.add_format({
     'border': 1
 })
 
+spcl_format = workbook.add_format({
+    'bold': True,
+    'text_wrap': True,
+    'valign': 'vcenter',
+    'align': 'center',
+    'fg_color': '#FFED94',
+    'font_color': '#C9211E',
+    'border': 1
+})
+
 worksheet.freeze_panes(1, 0)
 worksheet.autofilter(0, 0, len(df), len(df.columns) - 1)
 # Set row height (40 for all rows)
-for row in range(len(df) + 1):  # +1 for header row
-    worksheet.set_row(row, 40)
+worksheet.set_row(40)
 
 
 # Set column widths (13 for all columns)
-for col in range(len(df.columns)):
-    worksheet.set_column(col, col, 13)
+# for col in range(len(df.columns)):
+#     worksheet.set_column(col, col, 13)
+
+for col_num, column in enumerate(df.columns):
+    if column in ["Alpha", "Ownership"]:
+        # Get maximum length of column content including header
+        max_length = max(
+            df[column].astype(str).apply(len).max(),  # max length of values
+            len(str(column))  # length of column header
+        )
+        worksheet.set_column(col_num, col_num, max_length + 2)  # Add 2 for padding
+    else:
+        # Fixed width for other columns
+        worksheet.set_column(col_num, col_num, 13)
 
 # Format headers
-for col_num, column in enumerate (df.columns):
+# for col_num, column in enumerate (df.columns):
+#     if column == "Data":
+#         worksheet.write(0, col_num, column, data_format)
+#     else:
+#         worksheet.write(0, col_num, column, header_format)
+
+# Replace the existing format headers section with:
+
+# Format headers
+
+data_columns = ["Data"]
+header_columns = ["FirstName", "LastName", "Ownership", "xray"]
+special_columns = ["Alpha", "Beta", "gama"]
+
+for col_num, column in enumerate(df.columns):
     if column == "Data":
         worksheet.write(0, col_num, column, data_format)
-    else:
+    elif column in ["Alpha", "Beta", "gama"]:
+        worksheet.write(0, col_num, column, spcl_format)
+    elif column in ["FirstName", "LastName", "Ownership", "xray"]:
         worksheet.write(0, col_num, column, header_format)
+    else:
+        worksheet.write(0, col_num, column, header_format)  # Default format for any other columns
 
 # Save the workbook
 writer.close()
