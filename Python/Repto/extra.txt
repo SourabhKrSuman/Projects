@@ -1,0 +1,23 @@
+cd path\to\Repto
+pyinstaller --name Repto ^
+            --onefile ^
+            --windowed ^
+            --clean ^
+            --hidden-import pandas ^
+            --hidden-import xlsxwriter ^
+            --hidden-import openpyxl ^
+            repto_gui.py
+
+
+
+
+
+
+mkdir Repto_Windows
+copy dist\Repto.exe Repto_Windows\
+
+
+`
+# In Windows Command Prompt
+cd Repto_Windows
+powershell Compress-Archive -Path * -DestinationPath ..\Repto_Windows.zip
