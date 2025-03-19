@@ -170,3 +170,38 @@ end_time = time.time()
 execution_time = end_time - start_time
 print (f"process completed in {execution_time//60} minutes")
 # sys.exit()
+
+# ...existing code...
+
+# # Define new formats for conditional highlighting
+# green_format = workbook.add_format({
+#     'text_wrap': True,
+#     'valign': 'vcenter',
+#     'align': 'center',
+#     'bg_color': '#92D050',  # Light green color
+#     'border': 1
+# })
+
+# red_format = workbook.add_format({
+#     'text_wrap': True,
+#     'valign': 'vcenter',
+#     'align': 'center',
+#     'bg_color': '#FF6B6B',  # Light red color
+#     'border': 1
+# })
+
+# # Find the column index for 'abc'
+# abc_col_index = df.columns.get_loc('abc')
+
+# # Apply conditional formatting for each row in the data
+# for row_num in range(1, len(df) + 1):  # Start from 1 to skip header
+#     cell_value = df['abc'].iloc[row_num - 1]
+    
+#     if cell_value == 'prod':
+#         # Apply green format to entire row
+#         worksheet.set_row(row_num, None, green_format)
+#     elif cell_value in ['ac', 'bc']:
+#         # Apply red format to entire row
+#         worksheet.set_row(row_num, None, red_format)
+
+# # ...existing code...
