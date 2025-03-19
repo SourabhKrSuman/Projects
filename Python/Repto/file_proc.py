@@ -203,5 +203,4 @@ print (f"process completed in {execution_time//60} minutes")
 #     elif cell_value in ['ac', 'bc']:
 #         # Apply red format to entire row
 #         worksheet.set_row(row_num, None, red_format)
-
-# # ...existing code...
+# workbook.set_properties({'font_name': 'Arial'})  # Set default font for the workbook
